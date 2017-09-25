@@ -1,0 +1,82 @@
+#ifndef ZHU_EKF_H
+#define ZHU_EKF_H
+#include "Lu_Matrix.h"
+//#include "ADJ_MAG_INFO.h"
+/*说明：1、Lu_Matrix 是矩阵类，
+                对其对象obj的元素引用方式为：obj(0,0)表示0行，第0列元素，
+				                          obj(1,0)表示第1行，第0列元素
+			定义Lu_Matrix 类对象时，可以指定矩阵维数，例如：
+			        Lu_Matrix obj(3,2)定义3*2维矩阵，并各个元素初始化为0；
+					如果不指定维数，例如Lu_Matrix obj，则定义了一个0*0维的空矩阵；
+
+        2、EKF过程是：1）首先定义ZHU_EKF类的对象，无需指定任何参数，
+		             2）再初始化，采用函数：ZHU_EKF_init；
+					 3）当有惯导和里程计数据时进行状态更新：采用函数：State_Predict
+					 4）当gps数据到来时进行测量更新：函数：Obv_GPS_update
+		3、初始化后的任意时刻，函数getState返回三维状态列向量；
+		
+
+*/
+class ZHU_EKF{
+public:
+	ZHU_EKF();
+	ZHU_EKF(int dim_x,Lu_Matrix X0,Lu_Matrix P0);
+	~ZHU_EKF(){};
+
+	/*********接口函数：ZHU_EKF_init**************
+		函数功能：完成EKF初始化，
+		输入参数：int dim_x:状态维数
+				 Lu_Matrix X0：初始状态列向量
+				 Lu_Matrix P0：初始状态协方差矩阵
+		输出参数：无
+	****************************/
+	void init(int dim_x,Lu_Matrix X0,Lu_Matrix P0);
+	/*********接口函数：State_Predict**************
+		输入参数：CurSpeed:当前车速 单位：m/s
+				 yawRate:当前车z轴角速度单位:rad/s, 逆时针为正
+				CurrentTimeInSec：系统时间，单位 秒，精度至少为ms,最好为us级别；
+				SpeedError：速度传感器误差，单位m/s
+				yawRateError:惯导陀螺仪误差，单位 rad/s
+		输出参数：无
+	****************************/
+	void State_Predict(double CurSpeed,double yawRate,double CurrentTimeInSec,double SpeedError=0.1,double yawRateError=1.32665e-3);
+
+	/**************只观测 x和y，
+		输入参数说明：double x:GPS返回的横坐标，单位 “米”
+	                 double x:GPS返回的横坐标，单位 “米”
+	                 Lu_Matrix R0:2*2矩阵，对角线2个元素分别对应x,y的方差（注意，是传感器精度的平方！！不是精度！！）
+	***********************/
+	bool Obv_GPS_update(double x,double y,Lu_Matrix R0);
+
+	//返回状态
+	Lu_Matrix getState(){
+		return Xpre;
+	}
+
+private:
+//Attibutes
+	int dim_X;//从左至右为：状态维数，观测向量维数，输入向量维数，以及sigma点的个数；	
+	Lu_Matrix Xpre;//更新后的状态与预测的状态
+	Lu_Matrix P_pre;//上一行状态对应的协方差矩阵
+	
+	double LastSpeed;
+	double LastTime;
+	double LastYawRate;
+	bool   FirstUpdateFlag;
+
+//functions
+	
+	void State_Predict(Lu_Matrix U_input,Lu_Matrix Q_input);//用输入数据进行状态先验预测,U:输入向量，Q_input:输入噪声协方差。
+	
+	//全状态观测，如果所有的状态都可以用传感器观测，则用此函数
+	//输入参数说明：Lu_Matrix Obv：3*1矩阵，分别对应状态x,y,θ
+	//             Lu_Matrix R0:3*3矩阵，对角线三个元素分别对应状态的方差（注意，是传感器精度的平方！！不是精度！！）
+	void Obv_update(Lu_Matrix Obv,Lu_Matrix R_obv);   //用测量数据实现状态更新   obv:观测数据向量。
+
+	
+
+
+};
+
+
+#endif

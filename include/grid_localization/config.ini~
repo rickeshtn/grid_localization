@@ -1,0 +1,15 @@
+[BasicSettings]
+    SHOW_WINDOW3D = 1
+    SHOW_POINTCLOUD = 0
+    SHOW_POINTCLOUDCOLORED = 1
+    SHOW_LASERPOINTS = 0
+    SHOW_GRIDMAPLOCAL = 1
+    SHOW_ROBOT = 1
+    gridMapEnhanceStep = 0.01 
+    gridMapPzFactor = 0.1
+    gridMap_resolution = 0.1
+    gridMap_cellPointsThreshold = 7
+    gridMap_halfSize = 40
+[ICPSettings]
+
+

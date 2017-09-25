@@ -1,0 +1,93 @@
+[BasicSettings]
+SHOW_WINDOW3D = 1			//主窗口
+SHOW_MINIWINDOW = 0			//小窗口
+SHOW_CURRENTLASERPOINTS = 0
+SHOW_POINTCLOUD = 0
+SHOW_POINTCLOUDCOLORED = 1		//彩色点云，当前帧
+SHOW_GLOBALPOINTCLOUD = 1
+SHOW_CURRENTLASERPOINTS = 0
+SHOW_GRIDMAPLOCAL = 1
+SHOW_GRIDBOXS = 0
+SHOW_ROBOTPOSE = 1
+SHOW_ROBOTPATH = 1
+SHOW_GROUNDTRUTHPATH = 1
+SHOW_GPSEKFPOSE = 1 	//显示利用EKF（GPS+IMU+ODO）融合的结果
+SAVE_RESULTANDLOG = 0 	//存储结果数据与log（时间等）
+SAVE_POINTCLOUD = 1//0 	//((SAVE_POINTCLOUD && LOAD_POINTCLOUD)  ==0)
+SAVE_POINTCLOUDSTEP = 20 //insert point cloud every ? step
+LOAD_POINTCLOUD = 0//1 	// ((SAVE_POINTCLOUD && LOAD_POINTCLOUD)  ==0)
+NAME_MAPFILE_PLY = 
+NAME_MAPFILE_IMG = 
+USE_GPSFORMAPPING = 0//0  //用GPS数据生成栅格地图，配合Load_pointcloud和generate_gridmapFile使用
+USE_CURPOINTFORMATCHING = 1	//(use only current laser points for map matching)
+GENERATE_GRIDMAP = 0	//在没有找到地图文件的情况下，若该量为1，则生成局部栅格图（利用载入的全局点云）
+GENERATE_GRIDMAPFILE = 0 //在生成局部参考栅格图的基础上，将局部参考栅格图存为文件
+CAMERA_FOLLOW_ROBOT = 1	
+
+step_step = 1
+
+whichGpsForInitial = 0 //0:rtk 1:侧向GPS 2:Garmin
+timeForGps = 24 //单位秒，建立点云地图时为rtkGPS收敛预留的时间,通常20s
+gpsInitialStableCounter = 10 //单位秒 进行定位时，在程序运行该值秒后，认为gps已经收敛，根据此gps位置进行定位操作
+
+minDisBetweenLaserPoints = 0.05
+pointsMap_heightMin = 0.1//-0.3//-0.5
+pointsMap_heightMax = 8
+pointsMap_clipOutOfRange = 30
+pointsMap_clipCenterDistance = 10  
+
+gridMap_resolution = 0.1
+gridMap_halfSize = 40
+gridMap_enhanceStep = 0.03//0.02（校园）
+gridMap_pzFactor = 0.5//10（校园）//0.1
+gridMap_cellPointsThreshold = 3//10(紫竹)//15(校园环境)//
+
+pose_front_VLP16_x = 3.5
+pose_front_VLP16_y = 0
+pose_front_VLP16_z = 2.1
+pose_front_VLP16_yaw = -0.0
+pose_front_VLP16_pitch = 0.503598767
+pose_front_VLP16_roll = 0.017453292
+
+pose_rear_VLP16_x = -0.4
+pose_rear_VLP16_y = -0.07
+pose_rear_VLP16_z = 2.1
+pose_rear_VLP16_yaw = 3.1415926
+pose_rear_VLP16_pitch = 0.27815926
+pose_rear_VLP16_roll = 0.00
+
+poseErrorMax = 3//5 //基于ekf(odo+imu+gps)的定位结果与估计位姿的最大距离，超过此距离则重新初始化
+
+icp_maxIterationFirst = 50;
+icp_maxIterationAfterFirst = 2 //2
+
+[ICP]
+maxIterations    = 2//2    // 60The maximum number of iterations to execute if convergence is not achieved before
+minAbsStep_trans = 1e-6  // If the correction in all translation coordinates (X,Y,Z) is below this threshold (in meters), iterations are terminated:
+minAbsStep_rot   = 1e-6  // If the correction in all rotation coordinates (yaw,pitch,roll) is below this threshold (in radians), iterations are terminated:
+
+thresholdDist    = 5.0 //1.0   //0.5// Initial maximum distance for matching a pair of points
+thresholdAng_DEG = 5 //7     // An angular factor (in degrees) to increase the matching distance for distant points.
+
+ALFA             = 0.8   // After convergence, the thresholds are multiplied by this constant and ICP keep running (provides finer matching)
+
+smallestThresholdDist=0.06  //0.06 // This is the smallest the distance threshold can become after stopping ICP and accepting the result.
+onlyClosestCorrespondences=1  //default is true. 1: Use the closest points only, 0: Use all the correspondences within the threshold (more robust sometimes, but slower)
+
+// 0: icpClassic
+// 1: icpLevenbergMarquardt
+ICP_algorithm = 0 //0
+
+// decimation to apply to the point cloud being registered against the map
+// Reduce to "1" to obtain the best accuracy
+corresponding_points_decimation = 50 //10
+
+//Part of [MappingApplication]
+localizationLinDistance	= 0.01	//0.2 The distance threshold for correcting odometry with ICP (meters)  
+localizationAngDistance	= 5	// The distance threshold for correcting odometry with ICP (degrees)
+insertionLinDistance	= 0.01	//1 The distance threshold for inserting observations in the map (meters)
+insertionAngDistance	= 5.0	//45 The distance threshold for inserting observations in the map (degrees)
+minICPgoodnessToAccept	= 0.40	// Minimum ICP quality to accept correction [0,1].
+// Neeeded for LM method, which only supports point-map to point-map matching.
+matchAgainstTheGrid = 1
+

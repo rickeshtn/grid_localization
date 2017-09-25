@@ -1,0 +1,13 @@
+<!-- Starts up all sim node -->
+<launch>
+
+	<node  pkg="grid_localization" type="grid_localization" name="grid_localization" output="screen">
+		<param name="excute_mode" type="int" value="2" />
+		<!-- 模式选择，3个选项，
+			0为累积并存储全局点云，
+			1为生成并存储栅格图，
+			2为全局定位-->
+	</node>
+
+
+</launch>
