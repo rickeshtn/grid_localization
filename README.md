@@ -1,6 +1,6 @@
 # Elevation Grid Map Based Localization Using LiDAR sensor in Urban Environment
 
-<img src="./Screenshoot.png"/>  
+![Screenshot](/Screenshot.png)
 
 ## About Grid Localization
 Grid_localization is an elevation grid map based localization solution for urban environments using LiDAR sensor.
