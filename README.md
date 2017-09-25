@@ -1,16 +1,24 @@
+# Elevation Grid Map Based Localization Using LiDAR sensor in Urban Environment
 
 ![Screenshot](/Screenshot.png)
 
-Demo video is [here](https://www.youtube.com/watch?v=GNgIDupisc4&t=).
+##About grid_localization
+Grid_localization is an elevation grid map based localization solution for urban environments using LiDAR sensor.
+
+Matching step in this project is excuted between 3D point cloud (current measurement) and elevation grid map (reference map), using ICP based on [MRPT](https://www.mrpt.org/).
+
+MRPT-1.5 is required to build the project. See [how to get MRPT on Ubuntu](https://www.mrpt.org/MRPT_in_GNU/Linux_repositories).
+
+You can see DEMO [here](https://www.youtube.com/watch?v=GNgIDupisc4&t=).
+
+Localization result comparison is shown below, I'm to improving the performance.
+
+<img src="./result_image/20170920_0.05.png"/>  
 
 
-[MRPT](https://www.mrpt.org/) is required to build the project.
-
-See [how to get MRPT-1.5 on Ubuntu](https://www.mrpt.org/MRPT_in_GNU/Linux_repositories).
 
 
-#About grid_localization
-The project contains three functions:
+##Main functions
 
 1.Point cloud generation.
 
