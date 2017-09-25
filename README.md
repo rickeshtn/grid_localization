@@ -2,7 +2,7 @@
 
 ![Screenshot](/Screenshot.png)
 
-##About Grid Localization
+## About Grid Localization
 Grid_localization is an elevation grid map based localization solution for urban environments using LiDAR sensor.
 
 Matching step in this project is excuted between 3D point cloud (current measurement) and elevation grid map (reference map), using ICP based on [MRPT](https://www.mrpt.org/).
@@ -16,8 +16,7 @@ Localization result comparison is shown below, I'm to improving the performance.
 <img src="./result_image/20170920_0.05.png"/>  
 
 
-##Main Functions
-
+## Main Functions
 1.Point cloud generation.
 
 Generate a global point cloud with the trajectory formed form EKF using odometer, imu, and rtk-gps.
