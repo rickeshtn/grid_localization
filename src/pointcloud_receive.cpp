@@ -416,8 +416,8 @@ void pointcloud_receive::pointcloud_callback(
                         if (spmLocalGridMap[i][j] < gridMap_cellPointsThreshold) continue;
                         gap = spmLocalGridMap_max[i][j];//-spmLocalGridMap_min[i][j];
                         if(!gap) continue;
-                        else density = (float)spmLocalGridMap[i][j];//(float)spmLocalGridMap[i][j]/gap;.//density此处指数量
-                        tempValue = 1 - gap*gridMap_pzFactor-density*gridMap_enhanceStep;// leaves a lot to be improved
+                        else density = (float)spmLocalGridMap[i][j];//density here more like quantity
+                        tempValue = 1 - gap*gridMap_pzFactor-density*gridMap_enhanceStep;//i feel sorry for this
                         if(tempValue<0) localGridMap.setCell(i,j,0);
                         else localGridMap.setCell(i,j,tempValue);
                     }//end of loop j
@@ -425,10 +425,13 @@ void pointcloud_receive::pointcloud_callback(
                 //保存生成的gridmap图片文件
                 if(GENERATE_GRIDMAPFILE){
                     char occupancyMapFileName[100];
-                    std::string grid_map_file_path_temp="/home/guolindong/catkin_ws/src/grid_localization/map/changshu_g200_every2_0.1";
+                    std::string grid_map_file_path_temp=
+                            "/home/guolindong/catkin_ws/src/grid_localization/map/changshu_g200_every2_0.1";
                     grid_map_file_path_temp.append("/%i_%i.png");
-                    sprintf(occupancyMapFileName,grid_map_file_path_temp.c_str(),
-                        (int)curGridMapCenter.x(),(int)curGridMapCenter.y());
+                    sprintf(occupancyMapFileName,
+                            grid_map_file_path_temp.c_str(),
+                            (int)curGridMapCenter.x(),
+                            (int)curGridMapCenter.y());
                     localGridMap.saveAsBitmapFile(occupancyMapFileName);
                     ROS_INFO("grid map file saved");
                 }
@@ -596,7 +599,8 @@ void pointcloud_receive::pointcloud_callback(
 //            if(!USE_GLOBALPOINTCLOUDFORMATCHING)
             {
                 vector<float> point_x, point_y, point_z;
-                mrpt::opengl::CPointCloudColouredPtr pointCloudDisplay = mrpt::opengl::CPointCloudColoured::Create();
+                mrpt::opengl::CPointCloudColouredPtr pointCloudDisplay =
+                        mrpt::opengl::CPointCloudColoured::Create();
                 pointCloudDisplay->loadFromPointsMap(&curPointsMapColored);
                 curPointsMapColored.getAllPoints(point_x, point_y, point_z);
                 int colorCode = 0;
@@ -638,14 +642,14 @@ void pointcloud_receive::pointcloud_callback(
         if(SHOW_GROUNDTRUTHPATH)
         {
             CSetOfLinesPtr objPath = CSetOfLines::Create();
-            objPath->appendLine(poseEkf2D_last.x(),poseEkf2D_last.y(),0,poseEkf2D.x(),poseEkf2D.y(),0);
+            objPath->appendLine(poseEkf2D_last.x(),poseEkf2D_last.y(),0,
+                                poseEkf2D.x(),poseEkf2D.y(),0);
             poseEkf2D_last = poseEkf2D;
             objPath->setLineWidth(2);
             objPath->setColor(0.5,0.9,0.5);
             objSetPath->insert(objPath);
             scene->insert(objSetPath);
         }
-
 
         if(SHOW_ROBOTPATH)
         {
@@ -656,11 +660,14 @@ void pointcloud_receive::pointcloud_callback(
                     if (!(abs(poseEst2D_last.x() - poseEst2D.x())>3 || abs(poseEst2D_last.y() - poseEst2D.y())>3))
                     {
                         CSetOfLinesPtr objPath = CSetOfLines::Create();
-                        objPath->appendLine(poseEst2D_last.x(),poseEst2D_last.y(),0,poseEst2D.x(),poseEst2D.y(),0);
+                        objPath->appendLine(poseEst2D_last.x(),poseEst2D_last.y(),0,
+                                            poseEst2D.x(),poseEst2D.y(),0);
                         objPath->setLineWidth(2);
                         if(poseEstDist2poseEKF<(poseErrorMax/2))
                             errorColor = TColorf((poseEstDist2poseEKF*2/poseErrorMax)*0.8,0.8,0);
-                        else errorColor = TColorf(0.8,(1-(2*poseEstDist2poseEKF/poseErrorMax))*0.8,0);//自身对rgb值的范围有判断
+                        else errorColor = TColorf(0.8,
+                                                  (1-(2*poseEstDist2poseEKF/poseErrorMax))*0.8,//make it darker
+                                                  0);//自身对rgb值的范围有判断
                         objPath->setColor(errorColor);
                         if(DR.velocity>0.001)objSetPath->insert(objPath);//有速度时才添加
                     }
@@ -669,7 +676,8 @@ void pointcloud_receive::pointcloud_callback(
                     if (!(abs(poseEst2D_last.x() - poseEst2D.x())>3 || abs(poseEst2D_last.y() - poseEst2D.y())>3))
                     {
                         CSetOfLinesPtr objPath = CSetOfLines::Create();
-                        objPath->appendLine(poseEst2D_last.x(),poseEst2D_last.y(),0,poseEst2D.x(),poseEst2D.y(),0);
+                        objPath->appendLine(poseEst2D_last.x(),poseEst2D_last.y(),0,
+                                            poseEst2D.x(),poseEst2D.y(),0);
                         objPath->setLineWidth(2);
                         objPath->setColor(0.2,0.2,1);
                         objSetPath->insert(objPath);
@@ -703,7 +711,8 @@ void pointcloud_receive::pointcloud_callback(
             //camMini.setPointingAt(poseEst2D.x(),poseEst2D.y(),0);
 
             mrpt::opengl::CSetOfLinesPtr objPath = CSetOfLines::Create();
-            objPath->appendLine(poseEst2D.x(),poseEst2D.y(),0,poseEkf2D.x(),poseEkf2D.y(),0);
+            objPath->appendLine(poseEst2D.x(),poseEst2D.y(),0,
+                                poseEkf2D.x(),poseEkf2D.y(),0);
             objPath->setLineWidth(2);
             objPath->setColor(1,1,0);
 
