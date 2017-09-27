@@ -103,11 +103,10 @@ pointcloud_receive::pointcloud_receive()
     float minx = 100000000;
     float miny = 100000000;
 
-    objMapPath = CSetOfLines::Create();
-
-    objMapPath->setColor(0.9,0.8,1);
-    objMapPath->setLineWidth(2.5);
-    miniViewPointTo = CPoint2D((maxx+minx)/2,(maxy+miny)/2);
+//    objMapPath = CSetOfLines::Create();
+//    objMapPath->setColor(0.9,0.8,1);
+//    objMapPath->setLineWidth(2.5);
+//    miniViewPointTo = CPoint2D((maxx+minx)/2,(maxy+miny)/2);
 
     clipCenter = CPoint2D(0,0);
     curGridMapCenter = CPoint2D(0,0);
@@ -270,7 +269,9 @@ void pointcloud_receive::pointcloud_callback(
     }
     else{
         DR.get_poseGps_ekf();//initialGuessStableCounter if use RTK-GPS to generate map
-        poseEkf2D = CPose2D(DR.robot_poseGps_ekf.x(),DR.robot_poseGps_ekf.y(),DR.robot_poseGps_ekf.phi());
+        poseEkf2D = CPose2D(DR.robot_poseGps_ekf.x(),
+                            DR.robot_poseGps_ekf.y(),
+                            DR.robot_poseGps_ekf.phi());
         if (isNan(poseEkf2D.x()) || isNan(poseEkf2D.y()) )
         {
             X0_init(0) = poseEkf2D_last.x();
@@ -290,8 +291,15 @@ void pointcloud_receive::pointcloud_callback(
         //poseEstDist2poseEKF = pointEst2D.distance2DTo(poseEkf2D.x(),poseEkf2D.y());
 
         //for matching using history pointclouds
-        poseIncr2D = CPose2D(DR.robot_pose_inc.x(),DR.robot_pose_inc.y(),DR.robot_pose_inc.phi());
-        poseIncr3D = CPose3D(DR.robot_pose_inc.x(),DR.robot_pose_inc.y(),0,DR.robot_pose_inc.phi(),0,0);
+        poseIncr2D = CPose2D(DR.robot_pose_inc.x(),
+                             DR.robot_pose_inc.y(),
+                             DR.robot_pose_inc.phi());
+        poseIncr3D = CPose3D(DR.robot_pose_inc.x(),
+                             DR.robot_pose_inc.y(),
+                             0,
+                             DR.robot_pose_inc.phi(),
+                             0,
+                             0);
         poseDR2D += poseIncr2D;
         poseDR3D += poseIncr3D;
 
@@ -322,27 +330,6 @@ void pointcloud_receive::pointcloud_callback(
         }
         step++;
     }
-//    实时叠加激光点云形成局部稠密点云用于和全局地图匹配
-//    else{
-//        localPointsMapColored.insertAnotherMap(
-//            &curPointsMapColored,
-//            CPose3D(poseDR2D.x(),poseDR2D.y(),0,poseDR2D.phi(),0,0));
-//        clipCenter = CPoint2D(
-//                poseDR2D.x()+pointsMap_clipCenterDistance*cos(poseDR2D.phi()),
-//                poseDR2D.y()+pointsMap_clipCenterDistance*sin(poseDR2D.phi()));
-//        localPointsMapColored.clipOutOfRange(clipCenter,pointsMap_clipOutOfRange);
-//        tempPointsMap.insertAnotherMap(&localPointsMapColored,CPose3D(0, 0, 0, 0, 0, 0) - poseDR3D);
-//        if(SAVE_POINTCLOUD)
-//        {
-//            if(DR.velocity!=0)
-//            {
-//                globalPointsMap.insertAnotherMap(
-//                        &curPointsMapColored,
-//                        CPose3D(poseDR2D.x(),poseDR2D.y(),0,poseDR2D.phi(),0,0));
-//            }
-//        }
-//        step++;
-//    }
 
     if(isGlobalGridMapCenterChange(poseEst2D.x(),
                                    poseEst2D.y(),
@@ -358,8 +345,8 @@ void pointcloud_receive::pointcloud_callback(
         //若能够读取到地图
         if(myLoadFromBitmapFile(tempFileName,
                                 gridMap_resolution,
-                                (gridMap_halfSize-curGridMapCenter.x())/gridMap_resolution,
-                                (gridMap_halfSize-curGridMapCenter.y())/gridMap_resolution))
+                                gridMap_halfSize-curGridMapCenter.x()/gridMap_resolution,
+                                gridMap_halfSize-curGridMapCenter.y()/gridMap_resolution))
         {
             ROS_INFO("Map loaded: %f, %f", gridMap_halfSize - curGridMapCenter.x(),
                      gridMap_halfSize - curGridMapCenter.y());
@@ -384,6 +371,7 @@ void pointcloud_receive::pointcloud_callback(
             float ymax = curGridMapCenter.y() + gridMap_halfSize;
             float ymin = curGridMapCenter.y() - gridMap_halfSize;
 
+            //if max & min calculation error
             if(!((xmax>xmin)&&(ymax>ymin)))
             {
                 ROS_INFO("setSize error, xmax %f, xmin %f, ymax %f, ymin %f, posex %f, posey %f",
