@@ -186,19 +186,21 @@ void pointcloud_receive::pointcloud_callback(
         mrpt_bridge::copy2colouredPointsMap(front,curPointsMapColoredFront); //to CColoredPointsMap
         mrpt_bridge::copy2colouredPointsMap(rear,curPointsMapColoredRear);
 
-        curPointsMapColoredFront.changeCoordinatesReference(CPose3D(pose_front_VLP16_x,
-                                                                    pose_front_VLP16_y,
-                                                                    pose_front_VLP16_z,
-                                                                    pose_front_VLP16_yaw,
-                                                                    pose_front_VLP16_pitch,
-                                                                    pose_front_VLP16_roll));
+        curPointsMapColoredFront.changeCoordinatesReference(
+            CPose3D(pose_front_VLP16_x,
+                    pose_front_VLP16_y,
+                    pose_front_VLP16_z,
+                    pose_front_VLP16_yaw,
+                    pose_front_VLP16_pitch,
+                    pose_front_VLP16_roll));
 
-        curPointsMapColoredRear.changeCoordinatesReference(CPose3D(pose_rear_VLP16_x,
-                                                                   pose_rear_VLP16_y,
-                                                                   pose_rear_VLP16_z,
-                                                                   pose_rear_VLP16_yaw,
-                                                                   pose_rear_VLP16_pitch,
-                                                                   pose_rear_VLP16_roll));
+        curPointsMapColoredRear.changeCoordinatesReference(
+            CPose3D(pose_rear_VLP16_x,
+                    pose_rear_VLP16_y,
+                    pose_rear_VLP16_z,
+                    pose_rear_VLP16_yaw,
+                    pose_rear_VLP16_pitch,
+                    pose_rear_VLP16_roll));
 
         curPointsMapColoredTemp.insertionOptions.minDistBetweenLaserPoints = minDisBetweenLaserPoints;
         curPointsMapColoredTemp.insertAnotherMap(&curPointsMapColoredFront,CPose3D(0,0,0,0,0,0));
@@ -521,10 +523,8 @@ void pointcloud_receive::pointcloud_callback(
             hasCurRobotPoseEst = true;
         }
 
-//        GLOBV_RO(0,0)=(float)covariance_matching(0,0)*100;    //0.02//
-//        GLOBV_RO(1,1)=(float)covariance_matching(1,1)*100;    //0.02//
-        GLOBV_RO(0,0) = sqrt((float)covariance_matching(0,0));    //0.02//
-        GLOBV_RO(1,1) = sqrt((float)covariance_matching(1,1));    //0.02//
+        GLOBV_RO(0,0) = sqrt((float)covariance_matching(0,0));
+        GLOBV_RO(1,1) = sqrt((float)covariance_matching(1,1));
         GLOBV_RO*=GLOBV_RO;
         DR.glResult_EKF.Obv_GPS_update(poseEst2D.x(),poseEst2D.y(),GLOBV_RO);
         Lu_Matrix state = DR.glResult_EKF.getState();
@@ -715,10 +715,6 @@ void pointcloud_receive::pointcloud_callback(
                                 poseEkf2D.x(),poseEkf2D.y(),0);
             objPath->setLineWidth(2);
             objPath->setColor(1,1,0);
-
-//            grid_plane_xy = CGridPlaneXY::Create(poseEkf2D.x()-1,poseEkf2D.x()+1,poseEkf2D.y()-1,poseEkf2D.y()+1,0,0.1,0.2);
-//            //grid_plane_xy = CGridPlaneXY::Create(poseEst2D.x()-1,poseEst2D.x()+1,poseEst2D.y()-1,poseEst2D.y()+1,0,0.1,0.2);
-//            grid_plane_xy->setColor(0.4,0.4,0.4);
 
             char error[50];
             sprintf(error,

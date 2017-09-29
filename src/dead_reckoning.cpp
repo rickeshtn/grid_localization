@@ -139,14 +139,6 @@ void dead_reckoning::rtk_callback(const sensor_msgs::NavSatFix &msg)
             if (pulse_sum>0.001) GPSINS_EKF.Obv_GPS_update(rtkGps_x,rtkGps_y,GPSOBV_RO);
             if (!firstGpsUpdate) firstGpsUpdate = true;
         }
-
-        // GPSOBV_RO(0,0)=0.02;//0.05    //0.02//按照gps实际效果设定
-        // GPSOBV_RO(1,1)=0.02;//0.05    //0.02//按照gps实际效果设定
-        // GPSOBV_RO*=GPSOBV_RO;
-        // rtkGps_x = poseGps2D.x();
-        // rtkGps_y = poseGps2D.y();
-        // GPSINS_EKF.Obv_GPS_update(rtkGps_x,rtkGps_y,GPSOBV_RO);
-        // if (!firstGpsUpdate) firstGpsUpdate = true;
     }
 }
 
